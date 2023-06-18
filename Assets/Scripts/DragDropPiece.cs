@@ -67,6 +67,7 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
             transform.SetParent(_oldParent);
             GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
         }
+        _gridGenerator.Deactivate();
 
     }
 
@@ -93,6 +94,11 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
     public virtual void GetCaptured()
     {
         _gameManager.setTaken(_isWhite);
+    }
+
+    public virtual void Promote()
+    {
+
     }
     
 }

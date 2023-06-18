@@ -53,6 +53,11 @@ public class Cell : MonoBehaviour, IDropHandler
                     }
                     catch { }
 
+                    if ((getGridPosition().y==0 && !dragDropPiece.getWhite()) || (getGridPosition().y == 7 && dragDropPiece.getWhite()))
+                    {
+                        dragDropPiece.Promote();
+                    }
+
                 }
             }
             _gridGenerator.Deactivate();

@@ -33,4 +33,12 @@ public class Fish : DragDropPiece
         base.GetCaptured();
         Destroy(gameObject);
     }
+
+    public override void Promote()
+    {
+        base.Promote();
+        FishyQueen queen = Instantiate(Resources.Load<GameObject>("FishyQueen"), transform.position, Quaternion.identity, transform.parent).GetComponent<FishyQueen>();
+        queen.SetWhite(_isWhite);
+        Destroy(gameObject);
+    }
 }
