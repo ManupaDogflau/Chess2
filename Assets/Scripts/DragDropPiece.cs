@@ -15,7 +15,7 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
     protected GridGenerator _gridGenerator;
     protected GameManager _gameManager;
     protected Cell _cell=null;
-    protected bool _isWhite = true;
+    protected  bool _isWhite = true;
     protected Image _image;
 
     public void Awake()
@@ -34,12 +34,12 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
         _isWhite = isWhite;
     }
 
-    public bool getWhite()
+    public virtual bool getWhite()
     {
         return _isWhite;
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    public virtual void OnBeginDrag(PointerEventData eventData)
     {
         if (_gameManager.getWhiteTurn(_isWhite))
         {

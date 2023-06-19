@@ -92,6 +92,9 @@ public class GridGenerator : MonoBehaviour
             case MovementEnum.ELEPHANT:
                 cells.AddRange(GetCellsElephant(cell, isWhite));
                 break;
+            case MovementEnum.BEAR:
+                cells.AddRange(GetCellsBear());
+                break;
 
 
         }
@@ -99,7 +102,18 @@ public class GridGenerator : MonoBehaviour
         return cells;
     }
 
-    private List<Cell> GetCellsMonkey(Cell cell, bool isWhite)
+	private IEnumerable<Cell> GetCellsBear()
+	{
+        List<Cell> cells = new List<Cell>();
+        Cell cell;
+        if (_grid.TryGetValue(new Vector2(3, 3), out cell)) cells.Add(cell);
+        if (_grid.TryGetValue(new Vector2(3, 4), out cell)) cells.Add(cell);
+        if (_grid.TryGetValue(new Vector2(4, 3), out cell)) cells.Add(cell);
+        if (_grid.TryGetValue(new Vector2(4, 4), out cell)) cells.Add(cell);
+        return cells;
+    }
+
+	private List<Cell> GetCellsMonkey(Cell cell, bool isWhite)
     {
         Queue<Cell> queue = new Queue<Cell>();
         List<Cell> list = new List<Cell>();

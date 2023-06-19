@@ -9,4 +9,5 @@ public enum MovementEnum {
    MOVEANDCAPTURE=3,
    MONKEY=4,
    ELEPHANT=5,
+   BEAR=6,
 }

@@ -46,10 +46,7 @@ public class Cell : MonoBehaviour, IDropHandler
                     eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
                     try
                     {
-                        if (child.getWhite() != dragDropPiece.getWhite())
-                        {
-                            child.GetCaptured();
-                        }
+                       child.GetCaptured();
                     }
                     catch { }
 
