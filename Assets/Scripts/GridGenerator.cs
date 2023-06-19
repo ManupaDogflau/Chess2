@@ -10,7 +10,9 @@ public class GridGenerator : MonoBehaviour
     private GameObject _cell;
     private GameObject _fish;
     private Vector3 _firstPosition;
+
     private Dictionary<Vector2, Cell> _grid = new Dictionary<Vector2, Cell>();
+    private List<Cell> _jail = new List<Cell>();
 
     private void Awake()
     {
@@ -102,7 +104,24 @@ public class GridGenerator : MonoBehaviour
         return cells;
     }
 
-	private IEnumerable<Cell> GetCellsBear()
+    internal List<Cell> GetJail(bool isWhite)
+    {
+       if (isWhite)
+        {
+            List<Cell> cell = _jail.GetRange(0, 1);
+            cell.AddRange(_jail.GetRange(2, 1));
+            return cell;
+        }
+        else
+        {
+             List<Cell> cell = _jail.GetRange(1, 1);
+             cell.AddRange(_jail.GetRange(3, 1));
+              return cell;
+
+        }
+    }
+
+    private IEnumerable<Cell> GetCellsBear()
 	{
         List<Cell> cells = new List<Cell>();
         Cell cell;
@@ -220,10 +239,27 @@ public class GridGenerator : MonoBehaviour
 
     void Start()
     {
-       
-       
         for(int i=0; i<8; i++)
         {
+            if (i==4 || i == 3)
+            {
+                GameObject cell = Instantiate(_cell, _firstPosition + new Vector3(8 * 100, -i * 100, 0), Quaternion.identity, transform);
+                if ((i + 8) % 2 != 0)
+                {
+                    cell.GetComponent<Image>().color = Color.blue;
+                }
+                Cell cell_ = cell.GetComponent<Cell>();
+                cell_.setGridPosition(new Vector2(8, i));
+                _jail.Add(cell_);
+                cell = Instantiate(_cell, _firstPosition + new Vector3(-1 * 100, -i * 100, 0), Quaternion.identity, transform);
+                if ((i + -1) % 2 != 0)
+                {
+                    cell.GetComponent<Image>().color = Color.blue;
+                }
+                cell_ = cell.GetComponent<Cell>();
+                cell_.setGridPosition(new Vector2(-1, i));
+                _jail.Add(cell_);
+            }
             for (int j = 0; j < 8; j++)
             {
                 GameObject cell=Instantiate(_cell, _firstPosition + new Vector3(i * 100, -j * 100, 0), Quaternion.identity, transform);
@@ -254,6 +290,10 @@ public class GridGenerator : MonoBehaviour
    public void Deactivate()
     {
         foreach(Cell cell in _grid.Values)
+        {
+            cell.Deactivate();
+        }
+        foreach(Cell cell in _jail)
         {
             cell.Deactivate();
         }

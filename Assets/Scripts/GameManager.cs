@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     private bool lastTakenWhite;
     private bool lastTakenBlack;
     private bool isWhiteTurn;
+    private bool capturedWhite=false;
+    private bool capturedBlack= false;
 
     public bool getTaken(bool white)
     {
@@ -28,6 +30,12 @@ public class GameManager : MonoBehaviour
 
     public void ToogleTurn()
     {
+        if (getCaptured())
+        {
+            capturedBlack = false;
+            capturedWhite = false;
+            return;
+        }
         if (isWhiteTurn)
         {
             isWhiteTurn = false;
@@ -42,6 +50,39 @@ public class GameManager : MonoBehaviour
     public bool getWhiteTurn(bool isWhite)
     {
         return isWhiteTurn == isWhite;
+    }
+
+    public bool getCaptured()
+    {
+
+        return (capturedBlack || capturedWhite);
+
+    }
+
+    public bool getCaptured(bool isWhite)
+    {
+
+        if (isWhite)
+        {
+            return capturedWhite;
+        }
+        else
+        {
+            return capturedBlack;
+        }
+
+    }
+
+    public void setCaptured(bool isWhite)
+    {
+        if (isWhite)
+        {
+            capturedWhite = true;
+        }
+        else
+        {
+            capturedBlack= false;
+        }
     }
 
 }

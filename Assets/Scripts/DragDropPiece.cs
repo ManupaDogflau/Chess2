@@ -41,7 +41,7 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
 
     public virtual void OnBeginDrag(PointerEventData eventData)
     {
-        if (_gameManager.getWhiteTurn(_isWhite))
+        if (_gameManager.getWhiteTurn(_isWhite) && !_gameManager.getCaptured())
         {
             _cell = GetComponentInParent<Cell>();
             this.ActivateCells();
