@@ -12,6 +12,7 @@ public class Cell : MonoBehaviour, IDropHandler
     private Color _color;
     private GridGenerator _gridGenerator;
     private GameManager _gameManager;
+    private bool _isJail = false;
 
     private void Awake()
     {
@@ -19,6 +20,12 @@ public class Cell : MonoBehaviour, IDropHandler
         _gridGenerator = FindObjectOfType<GridGenerator>();
         _gameManager = FindObjectOfType<GameManager>();
     }
+
+    public void SetJail()
+    {
+        _isJail = true;
+    }
+
 
     private void Start()
     {
@@ -38,7 +45,7 @@ public class Cell : MonoBehaviour, IDropHandler
             foreach (Cell cell in dragDropPiece.getMovements())
             {
 
-                if (cell ==this && (transform.childCount == 0 || child.getWhite()!=dragDropPiece.getWhite())) 
+                if (cell == this && (transform.childCount == 0 || child.getWhite() != dragDropPiece.getWhite()))
                 {
                     _gameManager.ToogleTurn();
                     _gameManager.resetTaken();
@@ -46,20 +53,35 @@ public class Cell : MonoBehaviour, IDropHandler
                     eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
                     try
                     {
-                       child.GetCaptured();
+                        child.GetCaptured();
                     }
                     catch { }
 
-                    if ((getGridPosition().y==0 && !dragDropPiece.getWhite()) || (getGridPosition().y == 7 && dragDropPiece.getWhite()))
+                    //promote
+                    if ((getGridPosition().y == 0 && !dragDropPiece.getWhite()) || (getGridPosition().y == 7 && dragDropPiece.getWhite()))
                     {
                         dragDropPiece.Promote();
                     }
 
                 }
+                if(cell == this && child.getWhite() == dragDropPiece.getWhite() && _isJail && child.GetSalvable())
+                {
+                    child.Save(this);
+                    dragDropPiece.Save(this);
+                }
             }
             _gridGenerator.Deactivate();
 
         }
+    }
+
+    public DragDropPiece GetPiece()
+    {
+        if (!hasPiece())
+        {
+            throw new Exception("No piece");
+        }
+        return transform.GetChild(0).GetComponent<DragDropPiece>();
     }
 
     public bool hasPiece()

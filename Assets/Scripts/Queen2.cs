@@ -36,7 +36,7 @@ public class Queen2 : DragDropPiece
 
     public override void OnBeginDrag(PointerEventData eventData)
     {
-        if (_gameManager.getWhiteTurn(_isWhite) && !_gameManager.getCaptured(!_isWhite))
+        if (_gameManager.getWhiteTurn(_isWhite) && !_gameManager.getCaptured(!_isWhite) && !_gameManager.getSave())
         {
             _cell = GetComponentInParent<Cell>();
             this.ActivateCells();

@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     private bool isWhiteTurn;
     private bool capturedWhite=false;
     private bool capturedBlack= false;
+    private bool saveWhite = false;
+    private bool saveBlack = false;
 
     public bool getTaken(bool white)
     {
@@ -35,6 +37,11 @@ public class GameManager : MonoBehaviour
             capturedBlack = false;
             capturedWhite = false;
             return;
+        }
+        if (getSave())
+        {
+            saveBlack = false;
+            saveWhite = false;
         }
         if (isWhiteTurn)
         {
@@ -82,6 +89,39 @@ public class GameManager : MonoBehaviour
         else
         {
             capturedBlack= false;
+        }
+    }
+
+    public bool getSave()
+    {
+
+        return (saveBlack || saveWhite);
+
+    }
+
+    public bool getSave(bool isWhite)
+    {
+
+        if (isWhite)
+        {
+            return saveWhite;
+        }
+        else
+        {
+            return saveBlack;
+        }
+
+    }
+
+    public void setSave(bool isWhite)
+    {
+        if (isWhite)
+        {
+            saveWhite = true;
+        }
+        else
+        {
+            saveBlack = false;
         }
     }
 

@@ -62,7 +62,7 @@ public class GridGenerator : MonoBehaviour
                     }
                     else
                     {
-                        if (_grid.TryGetValue(position, out  cell_) && cell_.hasOponent(isWhite))
+                        if (_grid.TryGetValue(position, out cell_) && cell_.hasOponent(isWhite))
                         {
                             cells.Add(cell_);
                         }
@@ -104,9 +104,35 @@ public class GridGenerator : MonoBehaviour
         return cells;
     }
 
+    internal List<Cell> GetMonkeyReturnCells(bool isWhite, Cell cell)
+    {
+        Queue<Cell> queue = new Queue<Cell>();
+        HashSet<Cell> visited = new HashSet<Cell>();
+
+        Vector2 vector = cell.getGridPosition();
+
+        List<Cell> finalList = new List<Cell>();
+
+        queue = ProcessAdjacentCell(vector, new Vector2(1, 0), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(-1, 0), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(0, 1), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(0, -1), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(1, 1), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(-1, 1), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(1, -1), isWhite, queue, finalList, visited);
+        queue = ProcessAdjacentCell(vector, new Vector2(-1, -1), isWhite, queue, finalList, visited);
+
+        foreach (Cell aux in finalList)
+        {
+            print(aux.getGridPosition());
+        }
+
+        return finalList;
+    }
+
     internal List<Cell> GetJail(bool isWhite)
     {
-       if (isWhite)
+        if (isWhite)
         {
             List<Cell> cell = _jail.GetRange(0, 1);
             cell.AddRange(_jail.GetRange(2, 1));
@@ -114,15 +140,15 @@ public class GridGenerator : MonoBehaviour
         }
         else
         {
-             List<Cell> cell = _jail.GetRange(1, 1);
-             cell.AddRange(_jail.GetRange(3, 1));
-              return cell;
+            List<Cell> cell = _jail.GetRange(1, 1);
+            cell.AddRange(_jail.GetRange(3, 1));
+            return cell;
 
         }
     }
 
     private IEnumerable<Cell> GetCellsBear()
-	{
+    {
         List<Cell> cells = new List<Cell>();
         Cell cell;
         if (_grid.TryGetValue(new Vector2(3, 3), out cell)) cells.Add(cell);
@@ -132,11 +158,11 @@ public class GridGenerator : MonoBehaviour
         return cells;
     }
 
-	private List<Cell> GetCellsMonkey(Cell cell, bool isWhite)
+    private List<Cell> GetCellsMonkey(Cell cell, bool isWhite)
     {
         Queue<Cell> queue = new Queue<Cell>();
         List<Cell> list = new List<Cell>();
-        HashSet<Cell> visited = new HashSet<Cell>(); 
+        HashSet<Cell> visited = new HashSet<Cell>();
         queue.Enqueue(cell);
         int i = 0;
         while (queue.Count != 0)
@@ -145,10 +171,10 @@ public class GridGenerator : MonoBehaviour
             visited.Add(currentCell);
             Vector2 vector = currentCell.getGridPosition();
 
-            queue = ProcessAdjacentCell(vector , new Vector2(1, 0), isWhite, queue, list, visited);
-            queue = ProcessAdjacentCell(vector , new Vector2(-1, 0), isWhite, queue, list, visited);
-            queue = ProcessAdjacentCell(vector , new Vector2(0, 1), isWhite, queue, list, visited);
-            queue = ProcessAdjacentCell(vector , new Vector2(0, -1), isWhite, queue, list, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(1, 0), isWhite, queue, list, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(-1, 0), isWhite, queue, list, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(0, 1), isWhite, queue, list, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(0, -1), isWhite, queue, list, visited);
             queue = ProcessAdjacentCell(vector, new Vector2(1, 1), isWhite, queue, list, visited);
             queue = ProcessAdjacentCell(vector, new Vector2(-1, 1), isWhite, queue, list, visited);
             queue = ProcessAdjacentCell(vector, new Vector2(1, -1), isWhite, queue, list, visited);
@@ -158,9 +184,118 @@ public class GridGenerator : MonoBehaviour
         return list;
     }
 
-    private Queue<Cell> ProcessAdjacentCell(Vector2 position,Vector2 step, bool isWhite, Queue<Cell> queue, List<Cell> list, HashSet<Cell> visited)
+    public List<Cell> CheckKingSaving(bool isWhite, List<Cell> list)
     {
-        if (_grid.TryGetValue(position+step, out Cell medium) && medium.hasPiece())
+        List<Cell> lista = new List<Cell>();
+        Cell cell_;
+        if (isWhite)
+        {
+            if (_grid.TryGetValue(new Vector2(7, 3), out cell_))
+            {
+                if (list.Contains(cell_) && !cell_.hasOponent(isWhite))
+                {
+                    try
+                    {
+
+                        if (_jail.ToArray()[0].GetPiece().GetSalvable())
+                        {
+                            lista.Add(_jail.ToArray()[0]);
+                        }
+                    }
+                    catch { }
+                }
+            }
+            if (_grid.TryGetValue(new Vector2(7, 4), out cell_))
+            {
+                if (list.Contains(cell_) && !cell_.hasOponent(isWhite))
+                {
+                    try
+                    {
+                        if (_jail.ToArray()[2].GetPiece().GetSalvable())
+                        {
+                            lista.Add(_jail.ToArray()[2]);
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+        }
+        else
+        {
+            if (_grid.TryGetValue(new Vector2(0, 3), out cell_))
+            {
+                if (list.Contains(cell_) && !cell_.hasOponent(isWhite))
+                {
+                    try
+                    {
+                        if (_jail.ToArray()[1].GetPiece().GetSalvable())
+                        {
+                            lista.Add(_jail.ToArray()[1]);
+                        }
+                    }
+                    catch { }
+                }
+            }
+            if (_grid.TryGetValue(new Vector2(0, 4), out cell_))
+            {
+                if (list.Contains(cell_) && !cell_.hasOponent(isWhite))
+                {
+                    try
+                    {
+                        if (_jail.ToArray()[3].GetPiece().GetSalvable())
+                        {
+                            lista.Add(_jail.ToArray()[3]);
+                        }
+                    }
+                    catch { }
+                }
+            }
+        }
+        List<Cell> eliminate = new List<Cell>();
+        foreach (Cell aux in lista)
+        {
+            Queue<Cell> queue = new Queue<Cell>();
+            HashSet<Cell> visited = new HashSet<Cell>();
+
+            Vector2 vectoraux = aux.getGridPosition();
+            Vector2 vector;
+            if (vectoraux.y < 0)
+            {
+                vector = vectoraux + new Vector2(0, 1);
+            }
+            else
+            {
+                vector = vectoraux - new Vector2(0, 1);
+            }
+            List<Cell> finalList = new List<Cell>();
+
+            queue = ProcessAdjacentCell(vector, new Vector2(1, 0), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(-1, 0), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(0, 1), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(0, -1), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(1, 1), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(-1, 1), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(1, -1), isWhite, queue, finalList, visited);
+            queue = ProcessAdjacentCell(vector, new Vector2(-1, -1), isWhite, queue, finalList, visited);
+            if (finalList.Count == 0)
+            {
+                eliminate.Add(aux);
+            }
+        }
+        foreach (Cell cell in eliminate)
+        {
+            while (lista.Contains(cell))
+            {
+                lista.Remove(cell);
+            }
+        }
+        return lista;
+    }
+
+    private Queue<Cell> ProcessAdjacentCell(Vector2 position, Vector2 step, bool isWhite, Queue<Cell> queue, List<Cell> list, HashSet<Cell> visited)
+    {
+        if (_grid.TryGetValue(position + step, out Cell medium) && medium.hasPiece())
         {
             Vector2 endPosition = position + 2 * step;
             if (_grid.TryGetValue(endPosition, out Cell end))
@@ -171,7 +306,7 @@ public class GridGenerator : MonoBehaviour
                     {
                         queue.Enqueue(end);
                     }
-                        list.Add(end);
+                    list.Add(end);
 
                 }
                 else if (end.hasOponent(isWhite))
@@ -217,7 +352,7 @@ public class GridGenerator : MonoBehaviour
 
         // Celda diagonal inferior izquierda
         if (TryGetCellAtPosition(cellPosition + new Vector2(-1, -1), out medium) && TryGetCellAtPosition(cellPosition + new Vector2(-2, -2), out end))
-        {          
+        {
             if (!medium.hasPiece() && (!end.hasPiece() || end.hasOponent(isWhite)))
             {
                 list.Add(end);
@@ -239,9 +374,14 @@ public class GridGenerator : MonoBehaviour
 
     void Start()
     {
-        for(int i=0; i<8; i++)
+        GenerateGrid();
+    }
+
+    private void GenerateGrid()
+    {
+        for (int i = 0; i < 8; i++)
         {
-            if (i==4 || i == 3)
+            if (i == 4 || i == 3)
             {
                 GameObject cell = Instantiate(_cell, _firstPosition + new Vector3(8 * 100, -i * 100, 0), Quaternion.identity, transform);
                 if ((i + 8) % 2 != 0)
@@ -249,6 +389,7 @@ public class GridGenerator : MonoBehaviour
                     cell.GetComponent<Image>().color = Color.blue;
                 }
                 Cell cell_ = cell.GetComponent<Cell>();
+                cell_.SetJail();
                 cell_.setGridPosition(new Vector2(8, i));
                 _jail.Add(cell_);
                 cell = Instantiate(_cell, _firstPosition + new Vector3(-1 * 100, -i * 100, 0), Quaternion.identity, transform);
@@ -258,19 +399,20 @@ public class GridGenerator : MonoBehaviour
                 }
                 cell_ = cell.GetComponent<Cell>();
                 cell_.setGridPosition(new Vector2(-1, i));
+                cell_.SetJail();
                 _jail.Add(cell_);
             }
             for (int j = 0; j < 8; j++)
             {
-                GameObject cell=Instantiate(_cell, _firstPosition + new Vector3(i * 100, -j * 100, 0), Quaternion.identity, transform);
-                if ((i+j)%2!=0)
+                GameObject cell = Instantiate(_cell, _firstPosition + new Vector3(i * 100, -j * 100, 0), Quaternion.identity, transform);
+                if ((i + j) % 2 != 0)
                 {
                     cell.GetComponent<Image>().color = Color.blue;
                 }
                 Cell cell_ = cell.GetComponent<Cell>();
                 cell_.setGridPosition(new Vector2(i, j));
                 _grid.Add(new Vector2(i, j), cell_);
-                if (j == 1 || j==6)
+                if (j == 1 || j == 6)
                 {
                     GameObject piece = Instantiate(_fish, cell.transform);
                     DragDropPiece piece_ = piece.GetComponent<DragDropPiece>();
@@ -287,13 +429,13 @@ public class GridGenerator : MonoBehaviour
         }
     }
 
-   public void Deactivate()
+    public void Deactivate()
     {
-        foreach(Cell cell in _grid.Values)
+        foreach (Cell cell in _grid.Values)
         {
             cell.Deactivate();
         }
-        foreach(Cell cell in _jail)
+        foreach (Cell cell in _jail)
         {
             cell.Deactivate();
         }
@@ -311,4 +453,12 @@ public class GridGenerator : MonoBehaviour
         }
         return cells;
     }
+    
+    public Cell GetCell(Vector2 vector)
+    {
+        Cell cell;
+        _grid.TryGetValue(vector, out cell);
+        return cell;
+    }
+
 }

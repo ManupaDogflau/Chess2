@@ -14,11 +14,12 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
     protected Transform _outParent;
     protected GridGenerator _gridGenerator;
     protected GameManager _gameManager;
-    protected Cell _cell=null;
-    protected  bool _isWhite = true;
+    protected Cell _cell = null;
+    protected bool _isWhite = true;
     protected Image _image;
+    protected bool _salvable = false;
 
-    public void Awake()
+    public virtual void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
         _canvas = FindObjectOfType<Canvas>();
@@ -29,7 +30,7 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
         _gameManager = FindObjectOfType<GameManager>();
     }
 
-    public  virtual void SetWhite(bool isWhite)
+    public virtual void SetWhite(bool isWhite)
     {
         _isWhite = isWhite;
     }
@@ -41,7 +42,7 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
 
     public virtual void OnBeginDrag(PointerEventData eventData)
     {
-        if (_gameManager.getWhiteTurn(_isWhite) && !_gameManager.getCaptured())
+        if (_gameManager.getWhiteTurn(_isWhite) && !_gameManager.getCaptured() && !_gameManager.getSave())
         {
             _cell = GetComponentInParent<Cell>();
             this.ActivateCells();
@@ -55,10 +56,10 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
             _oldParent = transform.parent;
             transform.SetParent(_outParent);
         }
-   
+
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    public virtual void OnEndDrag(PointerEventData eventData)
     {
         _canvasGroup.blocksRaycasts = true;
         _canvasGroup.alpha = 1f;
@@ -100,5 +101,20 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
     {
 
     }
-    
+
+    public bool GetSalvable()
+    {
+        return _salvable;
+    }
+
+    public void SetSalvable(bool salvable)
+    {
+        _salvable = salvable;
+    }
+
+    public virtual void Save(Cell cell)
+    {
+
+    }
+
 }
