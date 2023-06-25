@@ -18,6 +18,9 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
     protected bool _isWhite = true;
     protected Image _image;
     protected bool _salvable = false;
+    protected AudioClip _capturedAudio;
+    [SerializeField] protected Sprite _whiteSprite;
+    [SerializeField] protected Sprite _blackSprite;
 
     public virtual void Awake()
     {
@@ -28,11 +31,29 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
         _image = GetComponent<Image>();
         _outParent = GameObject.Find("OutOfGrid").transform;
         _gameManager = FindObjectOfType<GameManager>();
+        _capturedAudio = Resources.Load<AudioClip>("Punch");
+ 
+        if (!_isWhite)
+        {
+            _image.sprite = _whiteSprite;
+        }
+        else
+        {
+            _image.sprite = _blackSprite;
+        }
     }
 
     public virtual void SetWhite(bool isWhite)
     {
         _isWhite = isWhite;
+        if (!_isWhite)
+        {
+            _image.sprite = _whiteSprite;
+        }
+        else
+        {
+            _image.sprite = _blackSprite;
+        }
     }
 
     public virtual bool getWhite()
@@ -94,6 +115,7 @@ public abstract class DragDropPiece : MonoBehaviour, IBeginDragHandler, IEndDrag
 
     public virtual void GetCaptured()
     {
+        SoundEmitter.Instance().PlaySFX(_capturedAudio);
         _gameManager.setTaken(_isWhite);
     }
 

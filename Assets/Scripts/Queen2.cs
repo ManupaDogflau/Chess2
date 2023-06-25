@@ -55,6 +55,13 @@ public class Queen2 : DragDropPiece
     public override void GetCaptured()
     {
         base.GetCaptured();
+        foreach (Cell cell in _gridGenerator.GetJail(_isWhite))
+        {
+            if (cell.hasPiece())
+            {
+                _gameManager.EndGame(_isWhite);
+            }
+        }
         _captured = true;
         _gameManager.setCaptured(_isWhite);
         transform.SetParent(_outParent);

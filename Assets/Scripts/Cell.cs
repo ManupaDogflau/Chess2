@@ -13,6 +13,7 @@ public class Cell : MonoBehaviour, IDropHandler
     private GridGenerator _gridGenerator;
     private GameManager _gameManager;
     private bool _isJail = false;
+    [SerializeField] private AudioClip _moveSound;
 
     private void Awake()
     {
@@ -47,6 +48,7 @@ public class Cell : MonoBehaviour, IDropHandler
 
                 if (cell == this && (transform.childCount == 0 || child.getWhite() != dragDropPiece.getWhite()))
                 {
+                    SoundEmitter.Instance().PlaySFX(_moveSound);
                     _gameManager.ToogleTurn();
                     _gameManager.resetTaken();
                     eventData.pointerDrag.transform.SetParent(transform);
@@ -64,11 +66,15 @@ public class Cell : MonoBehaviour, IDropHandler
                     }
 
                 }
-                if(cell == this && child.getWhite() == dragDropPiece.getWhite() && _isJail && child.GetSalvable())
+                try
                 {
-                    child.Save(this);
-                    dragDropPiece.Save(this);
+                    if (cell == this && child.getWhite() == dragDropPiece.getWhite() && _isJail && child.GetSalvable())
+                    {
+                        child.Save(this);
+                        dragDropPiece.Save(this);
+                    }
                 }
+                catch { }
             }
             _gridGenerator.Deactivate();
 

@@ -9,8 +9,13 @@ public class GridGenerator : MonoBehaviour
     // Start is called before the first frame update
     private GameObject _cell;
     private GameObject _fish;
+    private GameObject _king;
+    private GameObject _rook;
+    private GameObject _queen;
+    private GameObject _monkey;
+    private GameObject _elephant;
     private Vector3 _firstPosition;
-
+    private Canvas _canvas;
     private Dictionary<Vector2, Cell> _grid = new Dictionary<Vector2, Cell>();
     private List<Cell> _jail = new List<Cell>();
 
@@ -18,7 +23,13 @@ public class GridGenerator : MonoBehaviour
     {
         _cell = Resources.Load<GameObject>("Cell");
         _fish = Resources.Load<GameObject>("Fish");
-        _firstPosition = transform.GetChild(0).position;
+        _king = Resources.Load<GameObject>("King");
+        _queen = Resources.Load<GameObject>("Queen");
+        _monkey = Resources.Load<GameObject>("Monkey");
+        _elephant = Resources.Load<GameObject>("Elephant");
+        _rook = Resources.Load<GameObject>("Rook");
+        _firstPosition = new Vector3(601.0f, 889.0f,0.0f);
+        _canvas = FindObjectOfType<Canvas>();
     }
 
     internal List<Cell> GetCells(Cell cell, Vector2 vector, int quantity, MovementEnum type, bool isWhite)
@@ -379,11 +390,12 @@ public class GridGenerator : MonoBehaviour
 
     private void GenerateGrid()
     {
+        print(_firstPosition);
         for (int i = 0; i < 8; i++)
         {
             if (i == 4 || i == 3)
             {
-                GameObject cell = Instantiate(_cell, _firstPosition + new Vector3(8 * 100, -i * 100, 0), Quaternion.identity, transform);
+                GameObject cell = Instantiate(_cell, _firstPosition * _canvas.scaleFactor + new Vector3(8 * 100 * _canvas.scaleFactor, -i * 100 * _canvas.scaleFactor, 0), Quaternion.identity, transform);
                 if ((i + 8) % 2 != 0)
                 {
                     cell.GetComponent<Image>().color = Color.blue;
@@ -392,7 +404,7 @@ public class GridGenerator : MonoBehaviour
                 cell_.SetJail();
                 cell_.setGridPosition(new Vector2(8, i));
                 _jail.Add(cell_);
-                cell = Instantiate(_cell, _firstPosition + new Vector3(-1 * 100, -i * 100, 0), Quaternion.identity, transform);
+                cell = Instantiate(_cell, _firstPosition * _canvas.scaleFactor + new Vector3(-1 * 100 * _canvas.scaleFactor , -i * 100 * _canvas.scaleFactor, 0), Quaternion.identity, transform);
                 if ((i + -1) % 2 != 0)
                 {
                     cell.GetComponent<Image>().color = Color.blue;
@@ -404,7 +416,7 @@ public class GridGenerator : MonoBehaviour
             }
             for (int j = 0; j < 8; j++)
             {
-                GameObject cell = Instantiate(_cell, _firstPosition + new Vector3(i * 100, -j * 100, 0), Quaternion.identity, transform);
+                GameObject cell = Instantiate(_cell, _firstPosition * _canvas.scaleFactor + new Vector3(i * 100 * _canvas.scaleFactor, -j * 100 * _canvas.scaleFactor, 0), Quaternion.identity, transform);
                 if ((i + j) % 2 != 0)
                 {
                     cell.GetComponent<Image>().color = Color.blue;
@@ -412,9 +424,73 @@ public class GridGenerator : MonoBehaviour
                 Cell cell_ = cell.GetComponent<Cell>();
                 cell_.setGridPosition(new Vector2(i, j));
                 _grid.Add(new Vector2(i, j), cell_);
+                GameObject piece = null;
+                if (j== 0 || j == 7)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            piece = Instantiate(_rook, cell.transform);
+                            break;
+                        case 1:
+                            piece = Instantiate(_monkey, cell.transform);
+                            break;
+                        case 2:
+                            piece = Instantiate(_fish, cell.transform);
+                            break;
+                        case 3:
+                            if (j == 0)
+                            {
+                                piece = Instantiate(_king, cell.transform);
+                            }
+                            else
+                            {
+                                piece = Instantiate(_queen, cell.transform);
+                            }
+                            break;
+                        case 4:
+                            if (j == 0)
+                            {
+                                piece = Instantiate(_queen, cell.transform);
+                            }
+                            else
+                            {
+                                piece = Instantiate(_king, cell.transform);
+                            }
+                            break;
+                        case 5:
+                            piece = Instantiate(_fish, cell.transform);
+                            break;
+                        case 6:
+                            piece = Instantiate(_monkey, cell.transform);
+                            break;
+                        case 7:
+                            piece = Instantiate(_rook, cell.transform);
+                            break;
+                    }
+                        
+                    
+                    DragDropPiece piece_ = piece.GetComponent<DragDropPiece>();
+                    if (j == 7)
+                    {
+                        piece_.SetWhite(false);
+                    }
+                    else
+                    {
+                        piece_.SetWhite(true);
+                    }
+                }
                 if (j == 1 || j == 6)
                 {
-                    GameObject piece = Instantiate(_fish, cell.transform);
+                   
+                    if (i==2 || i == 5)
+                    {
+                        piece = Instantiate(_elephant, cell.transform);
+                    }
+                    else
+                    {
+                        piece = Instantiate(_fish, cell.transform);
+                    }
                     DragDropPiece piece_ = piece.GetComponent<DragDropPiece>();
                     if (j == 6)
                     {

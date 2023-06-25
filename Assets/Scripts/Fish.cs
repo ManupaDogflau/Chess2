@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Fish : DragDropPiece
 {
+    protected AudioClip _promoteAudio;
+
+    public override void Awake()
+    {
+        base.Awake();
+        _promoteAudio = Resources.Load<AudioClip>("Promote");
+    }
     public override List<Cell> getMovements()
     {
         List<Cell> cells = new List<Cell>();
@@ -15,18 +22,6 @@ public class Fish : DragDropPiece
         return cells;
     }
 
-    public override void SetWhite(bool isWhite)
-    {
-        base.SetWhite(isWhite);
-        if (_isWhite)
-        {
-            _image.color = Color.cyan;
-        }
-        else
-        {
-            _image.color = Color.red;
-        }
-    }
 
     public override void GetCaptured()
     {
@@ -37,6 +32,7 @@ public class Fish : DragDropPiece
     public override void Promote()
     {
         base.Promote();
+        SoundEmitter.Instance().PlaySFX(_promoteAudio);
         _gridGenerator.Deactivate();
         FishyQueen queen = Instantiate(Resources.Load<GameObject>("FishyQueen"), transform.position, Quaternion.identity, transform.parent).GetComponent<FishyQueen>();
         queen.SetWhite(_isWhite);

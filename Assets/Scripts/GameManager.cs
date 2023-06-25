@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +13,9 @@ public class GameManager : MonoBehaviour
     private bool capturedBlack= false;
     private bool saveWhite = false;
     private bool saveBlack = false;
+    private bool ended = false;
+    [SerializeField] private Text text;
+    [SerializeField] private GameObject endPanel;
 
     public bool getTaken(bool white)
     {
@@ -88,7 +93,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            capturedBlack= false;
+            capturedBlack= true;
         }
     }
 
@@ -121,8 +126,29 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            saveBlack = false;
+            saveBlack = true;
         }
     }
 
+    internal void EndGame(bool isWhite)
+    {
+        endPanel.SetActive(true);
+        ended = true;
+        if (isWhite)
+        {
+            text.text = "White wins";
+        }
+        else
+        {
+            text.text = "Black wins";
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && ended==false)
+        {
+            endPanel.SetActive(!endPanel.activeSelf);
+        }
+    }
 }

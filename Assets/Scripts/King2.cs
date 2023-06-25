@@ -7,6 +7,8 @@ public class King2 : DragDropPiece
 {
 
     private bool _captured = false;
+    [SerializeField] private Sprite _whiteImg;
+    [SerializeField] private Sprite _blackImg;
 
     public override void Awake()
     {
@@ -62,6 +64,13 @@ public class King2 : DragDropPiece
     public override void GetCaptured()
     {
         base.GetCaptured();
+        foreach (Cell cell in _gridGenerator.GetJail(_isWhite))
+        {
+            if (cell.hasPiece())
+            {
+                _gameManager.EndGame(_isWhite);
+            }
+        }
         _captured = true;
         _gameManager.setCaptured(_isWhite);
         transform.SetParent(_outParent);
@@ -73,6 +82,16 @@ public class King2 : DragDropPiece
         base.Save(cell);
         _salvable = false;
         _gameManager.setSave(_isWhite);
+        _blackSprite = _blackImg;
+        _whiteSprite = _whiteImg;
+        if (!_isWhite)
+        {
+            _image.sprite = _whiteImg;
+        }
+        else
+        {
+            _image.sprite = _blackImg;
+        }
         Cell cell_=transform.parent.gameObject.GetComponent<Cell>();
         Vector2 vector = cell.getGridPosition();
         if (vector.x < 0)
