@@ -92,7 +92,7 @@ public class GridGenerator : MonoBehaviour
                     }
                     else
                     {
-                        if (cell_.hasPiece())
+                        if (_grid.TryGetValue(position, out cell_) && cell_.hasPiece())
                         {
                             break;
                         }

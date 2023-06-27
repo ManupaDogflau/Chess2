@@ -14,7 +14,10 @@ https://manupa-dogflau.itch.io/chess-2
 
 ## Changelog
 
-- **V1.2**
+- **V1.3:**
+    - Solve Rook2 problem
+
+- **V1.2:**
     - Correct Code for WebGL
 
 - **V1.1:** 
