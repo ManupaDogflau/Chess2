@@ -14,6 +14,9 @@ https://manupa-dogflau.itch.io/chess-2
 
 ## Changelog
 
+- **V1.2**
+    - Correct Code for WebGL
+
 - **V1.1:** 
     - Added Readme
     - Correct WebGL configuration

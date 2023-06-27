@@ -37,47 +37,44 @@ public class Cell : MonoBehaviour, IDropHandler
         if (eventData.pointerDrag != null)
         {
             DragDropPiece dragDropPiece = eventData.pointerDrag.GetComponent<DragDropPiece>();
-            DragDropPiece child = null;
-            try
-            {
-                child = transform.GetChild(0).GetComponent<DragDropPiece>();
-            }catch{
-            }
+            DragDropPiece child = transform.childCount > 0 ? transform.GetChild(0).GetComponent<DragDropPiece>() : null;
+
             foreach (Cell cell in dragDropPiece.getMovements())
             {
-
-                if (cell == this && (transform.childCount == 0 || child.getWhite() != dragDropPiece.getWhite()))
+                if (cell == this && (transform.childCount == 0 || (child != null && child.getWhite() != dragDropPiece.getWhite())))
                 {
-                    SoundEmitter.Instance().PlaySFX(_moveSound);
+                    SoundEmitter soundEmitter = SoundEmitter.Instance();
+                    if (soundEmitter != null)
+                    {
+                        soundEmitter.PlaySFX(_moveSound);
+                    }
+
                     _gameManager.ToogleTurn();
                     _gameManager.resetTaken();
+
                     eventData.pointerDrag.transform.SetParent(transform);
-                    eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
-                    try
+                    eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
+
+                    if (child != null)
                     {
                         child.GetCaptured();
                     }
-                    catch { }
 
                     //promote
                     if ((getGridPosition().y == 0 && !dragDropPiece.getWhite()) || (getGridPosition().y == 7 && dragDropPiece.getWhite()))
                     {
                         dragDropPiece.Promote();
                     }
-
                 }
-                try
+
+                if (child != null && cell == this && child.getWhite() == dragDropPiece.getWhite() && _isJail && child.GetSalvable())
                 {
-                    if (cell == this && child.getWhite() == dragDropPiece.getWhite() && _isJail && child.GetSalvable())
-                    {
-                        child.Save(this);
-                        dragDropPiece.Save(this);
-                    }
+                    child.Save(this);
+                    dragDropPiece.Save(this);
                 }
-                catch { }
             }
-            _gridGenerator.Deactivate();
 
+            _gridGenerator.Deactivate();
         }
     }
 
